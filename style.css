@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --nail-pink: #f472b6;
+    --nail-pink-light: #fbcfe8;
+    --nail-pink-dark: #db2777;
+    --nail-gold: #fbbf24;
+    --dark-bg: #181216;
+    --card-bg: #221921;
+    --darker-bg: #100c0f;
+}
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--dark-bg);
+    color: #e5e7eb;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, .font-serif {
+    font-family: 'Playfair Display', serif;
+}
+
+/* Efecto visual de resplandor rosa personalizado */
+.neon-glow {
+    box-shadow: 0 0 15px rgba(244, 114, 182, 0.3);
+}
+
+.neon-glow-lg {
+    box-shadow: 0 0 25px rgba(244, 114, 182, 0.5);
+}
+
+/* Estilos personalizados para inputs y selects del formulario de reservas */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1) hue-rotate(200deg) saturate(300%);
+    cursor: pointer;
+}
+
+/* Transiciones suaves para tarjetas de servicio */
+.service-card {
+    transition: all 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-2px);
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: var(--darker-bg);
+}
+::-webkit-scrollbar-thumb {
+    background: #2b1f27;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--nail-pink);
+}
