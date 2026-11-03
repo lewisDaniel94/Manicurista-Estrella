@@ -15,6 +15,17 @@ if (menuBtn && mobileMenu) {
     });
 }
 
+// Formato legible de fecha y hora (ej. "jueves 5 de noviembre, 9:00 AM")
+function fmtWhen(date, time) {
+    if (!date || !time) return '-';
+    const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    const days = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+    const [y, m, d] = date.split('-').map(Number);
+    const [hh, mm] = time.split(':').map(Number);
+    const dt = new Date(y, m - 1, d);
+    return `${days[dt.getDay()]} ${d} de ${months[m - 1]}, ${hh % 12 || 12}:${String(mm).padStart(2, '0')} ${hh >= 12 ? 'PM' : 'AM'}`;
+}
+
 // Objeto para almacenar los datos de la reserva actual
 let bookingData = {
     service: '',
@@ -49,27 +60,12 @@ function getServicePrice(radioElement) {
 function updateStepIndicators(stepNumber) {
     for (let i = 1; i <= 4; i++) {
         const stepEl = document.getElementById(`step-${i}`);
-        if (stepEl) {
-            if (i === stepNumber) {
-                stepEl.classList.remove('hidden');
-            } else {
-                stepEl.classList.add('hidden');
-            }
-        }
-        
+        if (stepEl) stepEl.classList.toggle('hidden', i !== stepNumber);
+
         const indicator = document.getElementById(`step-indicator-${i}`);
         if (indicator) {
-            const span = indicator.querySelector('span');
-            if (i < stepNumber) {
-                indicator.className = "flex items-center gap-2 text-[#f472b6] opacity-60";
-                if (span) span.className = "w-7 h-7 rounded-full border border-[#f472b6] flex items-center justify-center font-bold bg-[#f472b6]/10";
-            } else if (i === stepNumber) {
-                indicator.className = "flex items-center gap-2 text-[#f472b6] font-bold";
-                if (span) span.className = "w-7 h-7 rounded-full border border-[#f472b6] flex items-center justify-center font-bold bg-[#f472b6]/10";
-            } else {
-                indicator.className = "flex items-center gap-2 text-gray-500";
-                if (span) span.className = "w-7 h-7 rounded-full border border-gray-700 flex items-center justify-center font-bold";
-            }
+            indicator.classList.toggle('active', i === stepNumber);
+            indicator.classList.toggle('done', i < stepNumber);
         }
     }
 }
@@ -191,7 +187,7 @@ function updateBookingSummary() {
 
     if (sService) sService.textContent = bookingData.service || '-';
     if (sBarber) sBarber.textContent = bookingData.barber || '-';
-    if (sDatetime) sDatetime.textContent = (bookingData.date && bookingData.time) ? `${bookingData.date} a las ${bookingData.time}` : '-';
+    if (sDatetime) sDatetime.textContent = fmtWhen(bookingData.date, bookingData.time);
     if (sPrice) sPrice.textContent = bookingData.price ? `$${bookingData.price.toFixed(2)}` : '-';
 }
 
@@ -225,11 +221,11 @@ function confirmBooking(event) {
     if (sucName) sucName.textContent = bookingData.clientName;
     if (sucService) sucService.textContent = bookingData.service;
     if (sucBarber) sucBarber.textContent = bookingData.barber;
-    if (sucDatetime) sucDatetime.textContent = `${bookingData.date} a las ${bookingData.time}`;
+    if (sucDatetime) sucDatetime.textContent = fmtWhen(bookingData.date, bookingData.time);
     if (sucPrice) sucPrice.textContent = `$${bookingData.price.toFixed(2)}`;
 
     const formattedPrice = `$${bookingData.price.toFixed(2)}`;
-    const whatsappMessage = `¡Hola Elegance Nails Studio! 💅✨%0A%0AQuiero confirmar mi cita con los siguientes datos:%0A- *Cliente:* ${bookingData.clientName}%0A- *Teléfono:* ${bookingData.clientPhone}%0A- *Servicio:* ${bookingData.service}%0A- *Nail Artist:* ${bookingData.barber}%0A- *Fecha y Hora:* ${bookingData.date} a las ${bookingData.time}%0A- *Total:* ${formattedPrice}%0A%0A¡Espero su confirmación!`;
+    const whatsappMessage = `¡Hola Elegance Nails Studio! 💅✨%0A%0AQuiero confirmar mi cita con los siguientes datos:%0A- *Cliente:* ${encodeURIComponent(bookingData.clientName)}%0A- *Teléfono:* ${encodeURIComponent(bookingData.clientPhone)}%0A- *Servicio:* ${encodeURIComponent(bookingData.service)}%0A- *Nail Artist:* ${encodeURIComponent(bookingData.barber)}%0A- *Fecha y Hora:* ${encodeURIComponent(fmtWhen(bookingData.date, bookingData.time))}%0A- *Total:* ${formattedPrice}%0A%0A¡Espero su confirmación!`;
     
     const whatsappUrl = `https://wa.me/584126623818?text=${whatsappMessage}`;
     const whatsappBtn = document.getElementById('whatsapp-btn');
